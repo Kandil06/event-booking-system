@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments :: head(${eventId != null} ? 'Edit event' : 'New event')}"></head>
+
+<body>
+	<nav th:replace="~{fragments :: nav}"></nav>
+
+	<main class="container" style="max-width: 640px">
+		<p><a th:href="@{/admin/events}">&larr; Manage events</a></p>
+
+		<section class="card">
+			<h1 th:text="${eventId != null} ? 'Edit event' : 'New event'">Event</h1>
+
+			<form th:action="${eventId != null} ? @{/admin/events/{id}(id=${eventId})} : @{/admin/events}"
+				th:object="${eventForm}" method="post">
+				<div class="field">
+					<label for="title">Title</label>
+					<input type="text" id="title" th:field="*{title}" required>
+					<div class="field-error" th:errors="*{title}"></div>
+				</div>
+
+				<div class="field">
+					<label for="location">Location</label>
+					<input type="text" id="location" th:field="*{location}" required>
+					<div class="field-error" th:errors="*{location}"></div>
+				</div>
+
+				<div class="field">
+					<label for="startsAt">Date and time</label>
+					<input type="datetime-local" id="startsAt" th:field="*{startsAt}" required>
+					<div class="field-error" th:errors="*{startsAt}"></div>
+				</div>
+
+				<div class="field">
+					<label for="capacity">Tickets allowed</label>
+					<input type="number" id="capacity" th:field="*{capacity}" min="1" required>
+					<div class="field-error" th:errors="*{capacity}"></div>
+					<div class="hint">Booking closes automatically when this many tickets are taken.</div>
+				</div>
+
+				<div class="field">
+					<label for="description">Description</label>
+					<textarea id="description" th:field="*{description}" maxlength="2000"></textarea>
+					<div class="field-error" th:errors="*{description}"></div>
+				</div>
+
+				<div class="actions">
+					<button class="btn" type="submit" th:text="${eventId != null} ? 'Save changes' : 'Create event'">
+						Save</button>
+					<a class="btn ghost" th:href="@{/admin/events}">Cancel</a>
+				</div>
+			</form>
+		</section>
+	</main>
+</body>
+
+</html>

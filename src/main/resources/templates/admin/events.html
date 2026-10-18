@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments :: head('Manage events')}"></head>
+
+<body>
+	<nav th:replace="~{fragments :: nav}"></nav>
+
+	<main class="container">
+		<div th:replace="~{fragments :: flash}"></div>
+
+		<div class="page-head">
+			<h1>Manage events</h1>
+			<a class="btn" th:href="@{/admin/events/new}">+ New event</a>
+		</div>
+
+		<div class="card empty" th:if="${events.isEmpty()}">No events yet. Create the first one.</div>
+
+		<div class="card table-wrap" th:unless="${events.isEmpty()}">
+			<table>
+				<thead>
+					<tr>
+						<th>Event</th>
+						<th>Date</th>
+						<th>Booked / allowed</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="v : ${events}">
+						<td>
+							<a th:href="@{/events/{id}(id=${v.event.id})}" th:text="${v.event.title}">Title</a>
+							<div class="meta" th:text="${v.event.location}">location</div>
+						</td>
+						<td th:text="${#temporals.format(v.event.startsAt, 'd MMM yyyy, HH:mm')}">date</td>
+						<td>
+							<span th:text="${v.booked} + ' / ' + ${v.event.capacity}">0 / 0</span>
+							<span class="badge off" th:if="${v.soldOut}">Sold out</span>
+							<span class="badge off" th:if="${v.event.past}">Ended</span>
+						</td>
+						<td>
+							<div class="actions">
+								<a class="btn ghost small"
+									th:href="@{/admin/events/{id}/bookings(id=${v.event.id})}">Tickets</a>
+								<a class="btn ghost small" th:href="@{/admin/events/{id}/edit(id=${v.event.id})}">Edit</a>
+								<form th:action="@{/admin/events/{id}/delete(id=${v.event.id})}" method="post"
+									onsubmit="return confirm('Delete this event?')">
+									<button class="btn danger small" type="submit">Delete</button>
+								</form>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
+</body>
+
+</html>

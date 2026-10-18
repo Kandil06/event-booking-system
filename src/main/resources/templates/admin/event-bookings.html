@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments :: head('Tickets')}"></head>
+
+<body>
+	<nav th:replace="~{fragments :: nav}"></nav>
+
+	<main class="container">
+		<p><a th:href="@{/admin/events}">&larr; Manage events</a></p>
+
+		<div class="page-head">
+			<h1 th:text="'Tickets · ' + ${view.event.title}">Tickets</h1>
+			<span class="badge" th:text="${view.booked} + ' / ' + ${view.event.capacity} + ' booked'">0 / 0</span>
+		</div>
+
+		<div class="card empty" th:if="${bookings.isEmpty()}">Nobody has booked this event yet.</div>
+
+		<div class="card table-wrap" th:unless="${bookings.isEmpty()}">
+			<table>
+				<thead>
+					<tr>
+						<th>Booked by</th>
+						<th>Tickets sent to</th>
+						<th>Booked on</th>
+						<th>Ticket codes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="b : ${bookings}">
+						<td>
+							<span th:text="${b.user.fullName}">Name</span>
+							<div class="meta" th:text="${b.user.email}">email</div>
+						</td>
+						<td th:text="${b.email}">email</td>
+						<td th:text="${#temporals.format(b.createdAt, 'd MMM yyyy, HH:mm')}">date</td>
+						<td>
+							<div class="ticket-row" th:each="t : ${b.tickets}">
+								<span class="ticket-code" th:classappend="${t.used} ? 'used'"
+									th:text="${t.code}">CODE</span>
+								<form th:action="@{/admin/tickets/{id}/toggle-used(id=${t.id})}" method="post">
+									<button class="btn ghost small" type="submit"
+										th:text="${t.used} ? 'Undo check-in' : 'Check in'">Check in</button>
+								</form>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
+</body>
+
+</html>
