@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments :: head('Booking')}"></head>
+
+<body>
+	<nav th:replace="~{fragments :: nav}"></nav>
+
+	<main class="container">
+		<div th:replace="~{fragments :: flash}"></div>
+
+		<section class="card">
+			<h1 th:text="${booking.event.title}">Event</h1>
+			<div class="meta"><strong>When</strong>
+				<span th:text="${#temporals.format(booking.event.startsAt, 'EEEE d MMMM yyyy, HH:mm')}">date</span>
+			</div>
+			<div class="meta"><strong>Where</strong> <span th:text="${booking.event.location}">location</span></div>
+			<div class="meta"><strong>Booked</strong>
+				<span th:text="${#temporals.format(booking.createdAt, 'd MMM yyyy, HH:mm')}">date</span>
+			</div>
+			<div class="meta" style="margin-bottom: 16px"><strong>Codes sent to</strong>
+				<span th:text="${booking.email}">email</span>
+			</div>
+
+			<h2 th:text="'Your ticket codes (' + ${booking.tickets.size()} + ')'">Your ticket codes</h2>
+			<ul class="tickets">
+				<li th:each="t : ${booking.tickets}">
+					<span class="ticket-code" th:classappend="${t.used} ? 'used'" th:text="${t.code}">CODE</span>
+				</li>
+			</ul>
+			<p class="hint" style="margin-top: 12px">Show a code at the entrance. Each code admits one person.</p>
+		</section>
+
+		<p style="margin-top: 16px"><a th:href="@{/bookings}">&larr; All my tickets</a></p>
+	</main>
+</body>
+
+</html>

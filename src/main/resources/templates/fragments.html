@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:fragment="head(title)">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${title} + ' · EventBook'">EventBook</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+	<nav class="nav" th:fragment="nav">
+		<div class="nav-inner">
+			<a class="brand" th:href="@{/events}">Event<span>Book</span></a>
+			<a th:href="@{/events}">Events</a>
+			<th:block th:if="${currentUser != null}">
+				<a th:href="@{/bookings}">My tickets</a>
+				<a th:if="${currentUser.admin}" th:href="@{/admin/events}">Manage events</a>
+				<span class="who" th:text="${currentUser.fullName}">Name</span>
+				<form th:action="@{/logout}" method="post">
+					<button class="btn ghost small" type="submit">Log out</button>
+				</form>
+			</th:block>
+			<th:block th:if="${currentUser == null}">
+				<a th:href="@{/login}">Log in</a>
+				<a class="btn small" th:href="@{/register}">Sign up</a>
+			</th:block>
+		</div>
+	</nav>
+
+	<th:block th:fragment="flash">
+		<div class="alert success" th:if="${success}" th:text="${success}"></div>
+		<div class="alert error" th:if="${error}" th:text="${error}"></div>
+	</th:block>
+
+</body>
+
+</html>

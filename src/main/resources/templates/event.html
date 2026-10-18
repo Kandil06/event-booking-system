@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments :: head(${view.event.title})}"></head>
+
+<body>
+	<nav th:replace="~{fragments :: nav}"></nav>
+
+	<main class="container">
+		<div th:replace="~{fragments :: flash}"></div>
+
+		<p><a th:href="@{/events}">&larr; All events</a></p>
+
+		<div class="two-col">
+			<section class="card">
+				<h1 th:text="${view.event.title}">Title</h1>
+				<div class="meta"><strong>When</strong>
+					<span th:text="${#temporals.format(view.event.startsAt, 'EEEE d MMMM yyyy, HH:mm')}">date</span>
+				</div>
+				<div class="meta"><strong>Where</strong> <span th:text="${view.event.location}">location</span></div>
+				<div class="bar">
+					<div th:style="'width:' + ${view.percentBooked} + '%'"></div>
+				</div>
+				<p class="muted"
+					th:text="${view.booked} + ' of ' + ${view.event.capacity} + ' tickets booked · ' + ${view.remaining} + ' left'">
+					booked</p>
+				<p th:if="${view.event.description}" th:text="${view.event.description}"
+					style="white-space: pre-line">Description</p>
+			</section>
+
+			<section class="card">
+				<h2>Book tickets</h2>
+
+				<p class="muted" th:if="${view.event.past}">This event has already taken place.</p>
+				<p class="muted" th:if="${!view.event.past and view.soldOut}">This event is sold out.</p>
+
+				<th:block th:if="${view.bookable}">
+					<div th:if="${currentUser == null}">
+						<p class="muted">Log in to book tickets for this event.</p>
+						<div class="actions">
+							<a class="btn" th:href="@{/login}">Log in</a>
+							<a class="btn ghost" th:href="@{/register}">Create account</a>
+						</div>
+					</div>
+
+					<form th:if="${currentUser != null}" th:action="@{/events/{id}/book(id=${view.event.id})}"
+						th:object="${bookingForm}" method="post">
+						<div class="field">
+							<label for="email">Email for your ticket codes</label>
+							<input type="email" id="email" th:field="*{email}" required>
+							<div class="field-error" th:errors="*{email}"></div>
+							<div class="hint">We send one code per ticket to this address.</div>
+						</div>
+
+						<div class="field">
+							<label for="quantity">Number of tickets</label>
+							<input type="number" id="quantity" th:field="*{quantity}" min="1"
+								th:max="${maxQuantity}" required>
+							<div class="field-error" th:errors="*{quantity}"></div>
+							<div class="hint" th:text="'Up to ' + ${maxQuantity} + ' per booking.'"></div>
+						</div>
+
+						<button class="btn" type="submit">Confirm booking</button>
+					</form>
+				</th:block>
+			</section>
+		</div>
+	</main>
+</body>
+
+</html>
